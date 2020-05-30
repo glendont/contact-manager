@@ -12,5 +12,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "react-devtools": "^4.7.0",
+    "react-uuid": "^1.0.2"
+  }
 }
