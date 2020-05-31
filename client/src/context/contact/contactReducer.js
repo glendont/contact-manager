@@ -6,16 +6,57 @@ import {
   UPDATE_CONTACT,
   FILTER_CONTACTS,
   CLEAR_FILTER,
+  CLEAR_CONTACTS,
+  CONTACT_ERROR,
+  GET_CONTACTS,
 } from "../types";
 
 // A reducer is just a function that takes in a state and an action that changes the state
 export default (state, action) => {
   switch (action.type) {
+    case GET_CONTACTS:
+      return {
+        ...state,
+        contacts: action.payload,
+        loading: false,
+      };
+    case CONTACT_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case CLEAR_FILTER:
+      return {
+        ...state,
+        filtered: null,
+      };
+    case FILTER_CONTACTS:
+      return {
+        ...state,
+        filtered: state.contacts.filter((contact) => {
+          const regex = new RegExp(`${action.payload}`, "gi");
+          return (
+            contact.name.match(regex) ||
+            contact.email.match(regex) ||
+            contact.phone.match(regex)
+          );
+        }),
+      };
+
+    case CLEAR_CONTACTS:
+      return {
+        ...state,
+        contacts: null,
+        filtered: null,
+        error: null,
+        current: null,
+      };
+
     case UPDATE_CONTACT:
       return {
         ...state,
         contacts: state.contacts.map((contact) =>
-          contact.id === action.payload.id ? action.payload : contact
+          contact._id === action.payload._id ? action.payload : contact
         ),
       };
     case SET_CURRENT:
@@ -31,13 +72,13 @@ export default (state, action) => {
     case ADD_CONTACT:
       return {
         ...state,
-        contacts: [...state.contacts, action.payload],
+        contacts: [action.payload, ...state.contacts],
       };
     case DELETE_CONTACT:
       return {
         ...state,
         contacts: state.contacts.filter(
-          (contact) => contact.id.toString() !== action.payload.toString()
+          (contact) => contact._id.toString() !== action.payload.toString()
         ),
       };
 
